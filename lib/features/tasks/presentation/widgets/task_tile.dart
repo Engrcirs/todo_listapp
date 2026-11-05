@@ -17,6 +17,7 @@ class TaskTile extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(tasksProvider.notifier);
+    final messenger = ScaffoldMessenger.of(context);
     final dueText = task.dueAt == null
         ? 'No time'
         : TimeOfDay.fromDateTime(task.dueAt!).format(context);
@@ -24,7 +25,20 @@ class TaskTile extends ConsumerWidget {
     return Dismissible(
       key: ValueKey(task.id),
       direction: DismissDirection.endToStart,
-      onDismissed: (_) => notifier.remove(task.id),
+      onDismissed: (_) {
+        notifier.remove(task.id);
+        messenger
+          ..hideCurrentSnackBar()
+          ..showSnackBar(
+            SnackBar(
+              content: const Text('Task deleted'),
+              action: SnackBarAction(
+                label: 'Undo',
+                onPressed: () => notifier.restore(task),
+              ),
+            ),
+          );
+      },
       background: Container(
         margin: const EdgeInsets.only(bottom: 8),
         padding: const EdgeInsets.only(right: 20),

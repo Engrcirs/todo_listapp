@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:todo_listapp/features/progress/progress_stats.dart';
 import 'package:todo_listapp/features/tasks/domain/task.dart';
 import 'package:todo_listapp/features/tasks/presentation/task_providers.dart';
 import 'package:todo_listapp/features/tasks/presentation/widgets/task_tile.dart';
@@ -53,6 +54,8 @@ class ProgressScreen extends ConsumerWidget {
                 Expanded(child: _Stat(label: 'Remaining', value: remaining)),
               ],
             ),
+            const SizedBox(height: 12),
+            _WeekCard(days: lastDays(tasks), streak: currentStreak(tasks)),
             const SizedBox(height: 20),
             const Text(
               'REMAINING BY PRIORITY',
@@ -90,13 +93,81 @@ class ProgressScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
-              'The 7-day chart and streak will appear once tasks are saved in the database.',
-              style: TextStyle(fontSize: 13, color: Color(0xFF4B5A54)),
-            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _WeekCard extends StatelessWidget {
+  const _WeekCard({required this.days, required this.streak});
+
+  final List<DayCount> days;
+  final int streak;
+
+  static const _initials = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+
+  @override
+  Widget build(BuildContext context) {
+    final maxCount = days.fold<int>(0, (m, d) => d.count > m ? d.count : m);
+    final primary = Theme.of(context).colorScheme.primary;
+    final streakText = streak == 0 ? 'No streak yet' : '$streak day streak';
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 18, 18, 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFFE1E7E2)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Last 7 days', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+              Text(streakText, style: const TextStyle(fontSize: 13, color: Color(0xFF4B5A54))),
+            ],
+          ),
+          const SizedBox(height: 14),
+          SizedBox(
+            height: 130,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                for (var i = 0; i < days.length; i++)
+                  Expanded(
+                    child: Semantics(
+                      label: '${days[i].count} tasks completed',
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (days[i].count > 0)
+                            Text('${days[i].count}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700)),
+                          const SizedBox(height: 4),
+                          Container(
+                            width: 28,
+                            height: maxCount == 0 ? 4 : 4 + 76 * days[i].count / maxCount,
+                            decoration: BoxDecoration(
+                              color: i == days.length - 1 ? primary : const Color(0xFF9CC9C3),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          const SizedBox(height: 6),
+                          Text(
+                            _initials[days[i].day.weekday - 1],
+                            style: const TextStyle(fontSize: 13, color: Color(0xFF4B5A54)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
