@@ -27,6 +27,7 @@ class Task {
     this.notes = '',
     this.dueAt,
     this.isDone = false,
+    this.completedAt,
   });
 
   final int id;
@@ -36,6 +37,7 @@ class Task {
   final TaskList list;
   final DateTime? dueAt;
   final bool isDone;
+  final DateTime? completedAt;
 
   Task copyWith({
     String? title,
@@ -44,6 +46,8 @@ class Task {
     TaskList? list,
     DateTime? dueAt,
     bool? isDone,
+    DateTime? completedAt,
+    bool clearCompletedAt = false,
   }) =>
       Task(
         id: id,
@@ -53,5 +57,28 @@ class Task {
         list: list ?? this.list,
         dueAt: dueAt ?? this.dueAt,
         isDone: isDone ?? this.isDone,
+        completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
+      );
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'title': title,
+        'notes': notes,
+        'priority': priority.name,
+        'list': list.name,
+        'dueAt': dueAt?.toIso8601String(),
+        'isDone': isDone,
+        'completedAt': completedAt?.toIso8601String(),
+      };
+
+  factory Task.fromJson(Map<String, dynamic> j) => Task(
+        id: j['id'] as int,
+        title: j['title'] as String,
+        notes: (j['notes'] as String?) ?? '',
+        priority: Priority.values.byName(j['priority'] as String),
+        list: TaskList.values.byName(j['list'] as String),
+        dueAt: j['dueAt'] == null ? null : DateTime.parse(j['dueAt'] as String),
+        isDone: j['isDone'] as bool,
+        completedAt: j['completedAt'] == null ? null : DateTime.parse(j['completedAt'] as String),
       );
 }
