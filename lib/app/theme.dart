@@ -6,6 +6,10 @@ ThemeData buildTheme() {
   return ThemeData(
     colorScheme: scheme,
     scaffoldBackgroundColor: const Color(0xFFF4F6F3),
+      navigationBarTheme: const NavigationBarThemeData(
+      backgroundColor: Colors.white,
+      indicatorColor: Color(0xFFE3F1EE),
+    ),
     floatingActionButtonTheme: const FloatingActionButtonThemeData(
       backgroundColor: Color(0xFF16231F),
       foregroundColor: Colors.white,
