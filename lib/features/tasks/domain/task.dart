@@ -24,23 +24,34 @@ class Task {
     required this.title,
     required this.priority,
     required this.list,
+    this.notes = '',
     this.dueAt,
     this.isDone = false,
   });
 
   final int id;
   final String title;
+  final String notes;
   final Priority priority;
   final TaskList list;
   final DateTime? dueAt;
   final bool isDone;
 
-  Task copyWith({bool? isDone}) => Task(
+  Task copyWith({
+    String? title,
+    String? notes,
+    Priority? priority,
+    TaskList? list,
+    DateTime? dueAt,
+    bool? isDone,
+  }) =>
+      Task(
         id: id,
-        title: title,
-        priority: priority,
-        list: list,
-        dueAt: dueAt,
+        title: title ?? this.title,
+        notes: notes ?? this.notes,
+        priority: priority ?? this.priority,
+        list: list ?? this.list,
+        dueAt: dueAt ?? this.dueAt,
         isDone: isDone ?? this.isDone,
       );
 }

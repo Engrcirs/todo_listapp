@@ -4,6 +4,7 @@ import 'package:todo_listapp/features/tasks/domain/task.dart';
 import 'package:todo_listapp/features/tasks/presentation/add_task_sheet.dart';
 import 'package:todo_listapp/features/tasks/presentation/task_providers.dart';
 import 'package:todo_listapp/features/tasks/presentation/widgets/task_tile.dart';
+import 'package:go_router/go_router.dart';
 
 const _days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 const _months = [
@@ -57,11 +58,11 @@ class TodayScreen extends ConsumerWidget {
             else ...[
               if (todo.isNotEmpty) ...[
                 _SectionLabel('TO DO · ${todo.length}'),
-                for (final t in todo) TaskTile(task: t),
+                for (final t in todo) GestureDetector(onTap: () => context.push('/task/${t.id}'), child: TaskTile(task: t)),
               ],
               if (done.isNotEmpty) ...[
                 _SectionLabel('DONE · ${done.length}'),
-                for (final t in done) TaskTile(task: t),
+                for (final t in done) GestureDetector(onTap: () => context.push('/task/${t.id}'), child: TaskTile(task: t)),
               ],
             ],
           ],

@@ -14,7 +14,7 @@ class TaskNotifier extends Notifier<List<Task>> {
         Task(id: 1, title: 'Review lecture notes', priority: Priority.medium, list: TaskList.school, dueAt: _today(9, 0)),
         Task(id: 2, title: 'Reply to client emails', priority: Priority.low, list: TaskList.work, dueAt: _today(11, 30)),
         Task(id: 3, title: 'Buy groceries', priority: Priority.low, list: TaskList.personal, dueAt: _today(17, 0)),
-        Task(id: 4, title: 'Draft project proposal', priority: Priority.high, list: TaskList.work, dueAt: _today(20, 0)),
+        Task(id: 4, title: 'Draft project proposal', notes: 'Keep it to two pages. Include timeline and budget summary.', priority: Priority.high, list: TaskList.work, dueAt: _today(20, 0)),
         Task(id: 5, title: 'Morning workout', priority: Priority.low, list: TaskList.personal, dueAt: _today(7, 0), isDone: true),
       ];
 
@@ -29,12 +29,31 @@ class TaskNotifier extends Notifier<List<Task>> {
     ];
   }
 
+  void update(Task updated) {
+    state = [
+      for (final t in state)
+        if (t.id == updated.id) updated else t,
+    ];
+  }
+
   void remove(int id) {
     state = state.where((t) => t.id != id).toList();
+  }
+
+  void restore(Task task) {
+    if (state.any((t) => t.id == task.id)) return;
+    state = [...state, task];
   }
 }
 
 final tasksProvider = NotifierProvider<TaskNotifier, List<Task>>(TaskNotifier.new);
+
+final taskProvider = Provider.family<Task?, int>((ref, id) {
+  for (final t in ref.watch(tasksProvider)) {
+    if (t.id == id) return t;
+  }
+  return null;
+});
 
 class FilterNotifier extends Notifier<TaskList?> {
   @override
