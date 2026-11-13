@@ -23,10 +23,7 @@ class ListsScreen extends ConsumerWidget {
                 list: list,
                 total: tasks.where((t) => t.list == list).length,
                 done: tasks.where((t) => t.list == list && t.isDone).length,
-                onTap: () {
-                  ref.read(filterProvider.notifier).select(list);
-                  context.go('/today');
-                },
+                  onTap: () => context.push('/list/${list.name}'),
               ),
           ],
         ),

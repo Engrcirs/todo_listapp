@@ -92,8 +92,34 @@ class FilterNotifier extends Notifier<TaskList?> {
 
 final filterProvider = NotifierProvider<FilterNotifier, TaskList?>(FilterNotifier.new);
 
+DateTime dayOnly(DateTime d) => DateTime(d.year, d.month, d.day);
+
+/// Tasks that belong on the Today screen, before the list filter is applied.
+final todayScopeProvider = Provider<List<Task>>((ref) {
+  final today = dayOnly(DateTime.now());
+  return ref.watch(tasksProvider).where((t) {
+    final due = t.dueAt == null ? null : dayOnly(t.dueAt!);
+    if (t.isDone) {
+      final doneDay = t.completedAt == null ? null : dayOnly(t.completedAt!);
+      return doneDay == today || due == today;
+    }
+    return due == null || !due.isAfter(today);
+  }).toList();
+});
+
 final visibleTasksProvider = Provider<List<Task>>((ref) {
-  final tasks = ref.watch(tasksProvider);
+  final tasks = ref.watch(todayScopeProvider);
   final filter = ref.watch(filterProvider);
   return filter == null ? tasks : tasks.where((t) => t.list == filter).toList();
+});
+
+/// Open tasks due after today, soonest first.
+final upcomingTasksProvider = Provider<List<Task>>((ref) {
+  final today = dayOnly(DateTime.now());
+  final list = ref
+      .watch(tasksProvider)
+      .where((t) => !t.isDone && t.dueAt != null && dayOnly(t.dueAt!).isAfter(today))
+      .toList()
+    ..sort((a, b) => a.dueAt!.compareTo(b.dueAt!));
+  return list;
 });

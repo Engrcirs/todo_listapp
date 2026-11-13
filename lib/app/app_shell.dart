@@ -21,6 +21,11 @@ class AppShell extends StatelessWidget {
             label: 'Today',
           ),
           NavigationDestination(
+            icon: Icon(Icons.event_outlined),
+            selectedIcon: Icon(Icons.event),
+            label: 'Upcoming',
+          ),
+          NavigationDestination(
             icon: Icon(Icons.list_alt_outlined),
             selectedIcon: Icon(Icons.list_alt),
             label: 'Lists',

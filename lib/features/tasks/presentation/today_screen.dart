@@ -17,7 +17,7 @@ class TodayScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final all = ref.watch(tasksProvider);
+    final all = ref.watch(todayScopeProvider);
     final visible = ref.watch(visibleTasksProvider);
     final filter = ref.watch(filterProvider);
 

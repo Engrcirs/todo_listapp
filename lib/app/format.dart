@@ -11,3 +11,12 @@ String formatDue(BuildContext context, DateTime? d) {
   return '${_months[d.month - 1]} ${d.day}, $time';
 }
 String formatDate(DateTime d) => '${_months[d.month - 1]} ${d.day}';
+const _weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+String formatDay(DateTime d) {
+  final now = DateTime.now();
+  final tomorrow = DateTime(now.year, now.month, now.day + 1);
+  final day = DateTime(d.year, d.month, d.day);
+  if (day == tomorrow) return 'Tomorrow';
+  return '${_weekdays[day.weekday - 1]}, ${_months[day.month - 1]} ${day.day}';
+}
