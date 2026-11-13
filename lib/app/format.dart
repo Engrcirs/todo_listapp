@@ -10,3 +10,4 @@ String formatDue(BuildContext context, DateTime? d) {
   if (isToday) return 'Today, $time';
   return '${_months[d.month - 1]} ${d.day}, $time';
 }
+String formatDate(DateTime d) => '${_months[d.month - 1]} ${d.day}';

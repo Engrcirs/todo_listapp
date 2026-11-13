@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:todo_listapp/features/tasks/domain/task.dart';
 import 'package:todo_listapp/features/tasks/presentation/task_providers.dart';
-
+import 'package:todo_listapp/app/format.dart';
 Color priorityColor(Priority p) => switch (p) {
       Priority.low => const Color(0xFF5B6A64),
       Priority.medium => const Color(0xFFB45309),
@@ -18,9 +18,7 @@ class TaskTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(tasksProvider.notifier);
     final messenger = ScaffoldMessenger.of(context);
-    final dueText = task.dueAt == null
-        ? 'No time'
-        : TimeOfDay.fromDateTime(task.dueAt!).format(context);
+      final dueText = task.dueAt == null ? 'No due date' : formatDue(context, task.dueAt);
 
     return Dismissible(
       key: ValueKey(task.id),

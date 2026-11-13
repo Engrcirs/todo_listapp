@@ -38,8 +38,11 @@ class TaskNotifier extends Notifier<List<Task>> {
     ref.read(taskRepositoryProvider).save(tasks);
   }
 
-  void add(String title, Priority priority, TaskList list) {
-    _set([...state, Task(id: _nextId++, title: title, priority: priority, list: list)]);
+  void add(String title, Priority priority, TaskList list, {DateTime? dueAt}) {
+    _set([
+      ...state,
+      Task(id: _nextId++, title: title, priority: priority, list: list, dueAt: dueAt),
+    ]);
   }
 
   void toggle(int id) {
