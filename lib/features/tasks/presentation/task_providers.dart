@@ -72,6 +72,44 @@ class TaskNotifier extends Notifier<List<Task>> {
     if (state.any((t) => t.id == task.id)) return;
     _set([...state, task]);
   }
+    void addSubtask(int taskId, String title) {
+    _set([
+      for (final t in state)
+        if (t.id == taskId)
+          t.copyWith(subtasks: [
+            ...t.subtasks,
+            Subtask(
+              id: t.subtasks.fold<int>(0, (m, s) => s.id > m ? s.id : m) + 1,
+              title: title,
+            ),
+          ])
+        else
+          t,
+    ]);
+  }
+
+  void toggleSubtask(int taskId, int subtaskId) {
+    _set([
+      for (final t in state)
+        if (t.id == taskId)
+          t.copyWith(subtasks: [
+            for (final s in t.subtasks)
+              if (s.id == subtaskId) s.copyWith(isDone: !s.isDone) else s,
+          ])
+        else
+          t,
+    ]);
+  }
+
+  void removeSubtask(int taskId, int subtaskId) {
+    _set([
+      for (final t in state)
+        if (t.id == taskId)
+          t.copyWith(subtasks: t.subtasks.where((s) => s.id != subtaskId).toList())
+        else
+          t,
+    ]);
+  }
 }
 
 final tasksProvider = NotifierProvider<TaskNotifier, List<Task>>(TaskNotifier.new);

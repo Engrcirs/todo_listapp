@@ -18,6 +18,25 @@ extension TaskListLabel on TaskList {
       };
 }
 
+class Subtask {
+  const Subtask({required this.id, required this.title, this.isDone = false});
+
+  final int id;
+  final String title;
+  final bool isDone;
+
+  Subtask copyWith({bool? isDone}) =>
+      Subtask(id: id, title: title, isDone: isDone ?? this.isDone);
+
+  Map<String, dynamic> toJson() => {'id': id, 'title': title, 'isDone': isDone};
+
+  factory Subtask.fromJson(Map<String, dynamic> j) => Subtask(
+        id: j['id'] as int,
+        title: j['title'] as String,
+        isDone: j['isDone'] as bool,
+      );
+}
+
 class Task {
   const Task({
     required this.id,
@@ -28,6 +47,7 @@ class Task {
     this.dueAt,
     this.isDone = false,
     this.completedAt,
+    this.subtasks = const [],
   });
 
   final int id;
@@ -38,6 +58,7 @@ class Task {
   final DateTime? dueAt;
   final bool isDone;
   final DateTime? completedAt;
+  final List<Subtask> subtasks;
 
   Task copyWith({
     String? title,
@@ -48,6 +69,7 @@ class Task {
     bool? isDone,
     DateTime? completedAt,
     bool clearCompletedAt = false,
+    List<Subtask>? subtasks,
   }) =>
       Task(
         id: id,
@@ -58,6 +80,7 @@ class Task {
         dueAt: dueAt ?? this.dueAt,
         isDone: isDone ?? this.isDone,
         completedAt: clearCompletedAt ? null : (completedAt ?? this.completedAt),
+        subtasks: subtasks ?? this.subtasks,
       );
 
   Map<String, dynamic> toJson() => {
@@ -69,6 +92,7 @@ class Task {
         'dueAt': dueAt?.toIso8601String(),
         'isDone': isDone,
         'completedAt': completedAt?.toIso8601String(),
+        'subtasks': [for (final s in subtasks) s.toJson()],
       };
 
   factory Task.fromJson(Map<String, dynamic> j) => Task(
@@ -80,5 +104,9 @@ class Task {
         dueAt: j['dueAt'] == null ? null : DateTime.parse(j['dueAt'] as String),
         isDone: j['isDone'] as bool,
         completedAt: j['completedAt'] == null ? null : DateTime.parse(j['completedAt'] as String),
+        subtasks: [
+          for (final s in (j['subtasks'] as List<dynamic>? ?? const []))
+            Subtask.fromJson(s as Map<String, dynamic>),
+        ],
       );
 }

@@ -18,7 +18,7 @@ class TaskTile extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final notifier = ref.read(tasksProvider.notifier);
     final messenger = ScaffoldMessenger.of(context);
-      final dueText = task.dueAt == null ? 'No due date' : formatDue(context, task.dueAt);
+    final dueText = task.dueAt == null ? 'No due date' : formatDue(context, task.dueAt);
 
     return Dismissible(
       key: ValueKey(task.id),
@@ -90,6 +90,13 @@ class TaskTile extends ConsumerWidget {
                       ),
                     ],
                   ),
+                      if (task.subtasks.isNotEmpty) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '${task.subtasks.where((s) => s.isDone).length}/${task.subtasks.length}',
+                          style: const TextStyle(fontSize: 13, color: Color(0xFF4B5A54)),
+                        ),
+                      ],
                 ],
               ),
             ),
